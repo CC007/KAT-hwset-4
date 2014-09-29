@@ -13,6 +13,7 @@ class Agent implements Comparable<Agent> {
     private double average;
     private String strategy;
     private int[][] memory;
+    private int[] memoryEncounters;
     private int[][] memoryOwnActions;
     boolean hasMoved;
     private Random r = new Random();
@@ -46,6 +47,12 @@ class Agent implements Comparable<Agent> {
                 memoryOwnActions[m][n] = 0;
             }
         }
+        
+        //memoryEncounters[agentID] contains the amount of encounters with this agent.
+        memoryEncounters = new int[scape.numAgents];
+        for (int n = 0; n < memoryEncounters.length; n++) {
+            memoryEncounters[n] = 0;
+        }
     }
 
     // This method lets agents move and play against other agents.
@@ -78,18 +85,18 @@ class Agent implements Comparable<Agent> {
 
         // This agent cooperates, the other defects.
         if (ownAction == 1 && otherAction == -1) {
-            other.addScore(2);
+            other.addScore(5);
         }
 
         // This agent defects, the other cooperates.
         if (ownAction == -1 && otherAction == 1) {
-            this.score += 2;
+            this.score += 5;
         }
 
         // Both agents defect.
         if (ownAction == -1 && otherAction == -1) {
-            this.score += 1;
-            other.addScore(1);
+            this.score += 2;
+            other.addScore(2);
         }
 
         // Below the memories of both agents are updated.
@@ -109,6 +116,7 @@ class Agent implements Comparable<Agent> {
     public int getAction(int playerID) {
         int action = 1;
         encounters++;
+        memoryEncounters[playerID]++;
 
         //ALL-D
         if (strategy.equals("ALL-D")) {
@@ -117,7 +125,7 @@ class Agent implements Comparable<Agent> {
         
         //TIT-FOR-TAT
         else if (strategy.equals("TIT-FOR-TAT")) {
-            if (memory[playerID].length == 0) {
+            if (memoryEncounters[playerID] == 1) {
                 action = 1;
             } else {
                 action = memory[playerID][0];
@@ -133,17 +141,17 @@ class Agent implements Comparable<Agent> {
         else if (strategy.equals("JOSS")) {
             if (r.nextInt(10) == 0) {
                 action = -1;
-            } else if (memory[playerID].length == 0) {
+            } else if (memoryEncounters[playerID] == 1) {
                 action = 1;
             } else {
                 action = memory[playerID][0];
             }
         } //TESTER
         else if (strategy.equals("RANDOM")) {
-            if (memory[playerID].length == 0) {
+            if (memoryEncounters[playerID] == 1) {
                 action = -1;
             } else if (memory[playerID][0] == 1) {
-                if (memory[playerID].length < 3) {
+                if (memoryEncounters[playerID] < 4) {
                     action = 1;
                 } else if (memoryOwnActions[playerID][0] == -1 || memoryOwnActions[playerID][1] == -1) {
                     action = 1;
