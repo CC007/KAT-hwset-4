@@ -45,7 +45,11 @@ public class Simulation {
 	static int startingAgents = 25;
 	static String[] strategies = {
 		"ALL-D",
-		"TIT-FOR-TAT"
+		"TIT-FOR-TAT",
+                "ALL-C",
+                "JOSS",
+                "TESTER",
+                "RANDOM"
 		//Add you own strategy names here
 	};
 	
