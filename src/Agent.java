@@ -78,18 +78,18 @@ class Agent implements Comparable<Agent> {
 
         // This agent cooperates, the other defects.
         if (ownAction == 1 && otherAction == -1) {
-            other.addScore(5);
+            other.addScore(2);
         }
 
         // This agent defects, the other cooperates.
         if (ownAction == -1 && otherAction == 1) {
-            this.score += 5;
+            this.score += 2;
         }
 
         // Both agents defect.
         if (ownAction == -1 && otherAction == -1) {
-            this.score += 2;
-            other.addScore(2);
+            this.score += 1;
+            other.addScore(1);
         }
 
         // Below the memories of both agents are updated.
