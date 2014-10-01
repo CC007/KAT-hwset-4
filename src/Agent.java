@@ -47,7 +47,7 @@ class Agent implements Comparable<Agent> {
                 memoryOwnActions[m][n] = 0;
             }
         }
-        
+
         //memoryEncounters[agentID] contains the amount of encounters with this agent.
         memoryEncounters = new int[scape.numAgents];
         for (int n = 0; n < memoryEncounters.length; n++) {
@@ -121,23 +121,17 @@ class Agent implements Comparable<Agent> {
         //ALL-D
         if (strategy.equals("ALL-D")) {
             action = -1;
-        } 
-        
-        //TIT-FOR-TAT
+        } //TIT-FOR-TAT
         else if (strategy.equals("TIT-FOR-TAT")) {
             if (memoryEncounters[playerID] == 1) {
                 action = 1;
             } else {
                 action = memory[playerID][0];
             }
-        } 
-
-        //ALL-C
+        } //ALL-C
         else if (strategy.equals("ALL-C")) {
             action = 1;
-        } 
-
-        //JOSS
+        } //JOSS
         else if (strategy.equals("JOSS")) {
             if (r.nextInt(10) == 0) {
                 action = -1;
@@ -147,7 +141,7 @@ class Agent implements Comparable<Agent> {
                 action = memory[playerID][0];
             }
         } //TESTER
-        else if (strategy.equals("RANDOM")) {
+        else if (strategy.equals("TESTER")) {
             if (memoryEncounters[playerID] == 1) {
                 action = -1;
             } else if (memory[playerID][0] == 1) {
@@ -158,7 +152,7 @@ class Agent implements Comparable<Agent> {
                 } else {
                     action = -1;
                 }
-            }else{
+            } else {
                 action = memory[playerID][0];
             }
         } //RANDOM
