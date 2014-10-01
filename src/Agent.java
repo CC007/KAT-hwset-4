@@ -141,7 +141,7 @@ class Agent implements Comparable<Agent> {
                 action = memory[playerID][0];
             }
         } //TESTER
-        else if (strategy.equals("RANDOM")) {
+        else if (strategy.equals("TESTER")) {
             if (memoryEncounters[playerID] == 1) {
                 action = -1;
             } else if (memory[playerID][0] == 1) {
