@@ -49,7 +49,8 @@ public class Simulation {
                 "ALL-C",
                 "JOSS",
                 "TESTER",
-                "RANDOM"
+                //"RANDOM",
+                "SSTRAT"
 		//Add you own strategy names here
 	};
 	

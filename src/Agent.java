@@ -47,7 +47,7 @@ class Agent implements Comparable<Agent> {
                 memoryOwnActions[m][n] = 0;
             }
         }
-        
+
         //memoryEncounters[agentID] contains the amount of encounters with this agent.
         memoryEncounters = new int[scape.numAgents];
         for (int n = 0; n < memoryEncounters.length; n++) {
@@ -121,23 +121,17 @@ class Agent implements Comparable<Agent> {
         //ALL-D
         if (strategy.equals("ALL-D")) {
             action = -1;
-        } 
-        
-        //TIT-FOR-TAT
+        } //TIT-FOR-TAT
         else if (strategy.equals("TIT-FOR-TAT")) {
             if (memoryEncounters[playerID] == 1) {
                 action = 1;
             } else {
                 action = memory[playerID][0];
             }
-        } 
-
-        //ALL-C
+        } //ALL-C
         else if (strategy.equals("ALL-C")) {
             action = 1;
-        } 
-
-        //JOSS
+        } //JOSS
         else if (strategy.equals("JOSS")) {
             if (r.nextInt(10) == 0) {
                 action = -1;
@@ -158,14 +152,48 @@ class Agent implements Comparable<Agent> {
                 } else {
                     action = -1;
                 }
-            }else{
+            } else {
                 action = memory[playerID][0];
             }
         } //RANDOM
         else if (strategy.equals("RANDOM")) {
             action = (r.nextBoolean() ? 1 : -1);
+        } //SSTRAT 
+        else if (strategy.equals("SSTRAT")) {
+            if (memoryEncounters[playerID] == 0 || memoryEncounters[playerID] == 3) {
+                action = -1;
+            } else if (memoryEncounters[playerID] == 1 || memoryEncounters[playerID] == 2) {
+                action = 1;
+            } else {//ALL-D or ALL-C
+                boolean isAllD = true;
+                boolean isAllC = true;
+                int i;
+                for (i = 0; i < memoryEncounters[playerID] && i < 10; i++) {
+                    if (memory[playerID][i] == 1) {
+                        isAllD = false;
+                    }
+                    if (memory[playerID][i] == -1) {
+                        isAllC = false;
+                    }
+                }
+                if (isAllD || isAllC) {
+                    action = -1;
+                } //against TIT-for-TAT
+                else if (memory[playerID][0] == memoryOwnActions[playerID][1]
+                        && memory[playerID][1] == memoryOwnActions[playerID][2]
+                        && memory[playerID][2] == memoryOwnActions[playerID][3]) {
+                    action = 1;
+                } // against itself
+                else if (memory[playerID][0] == -1
+                        && memory[playerID][1] == 1
+                        && memory[playerID][2] == 1
+                        && memory[playerID][3] == -1) {
+                    action = 1;
+                } else {
+                    action = -1;
+                }
+            }
         }
-
         return action;
     }
 
