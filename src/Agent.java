@@ -2,6 +2,12 @@ import java.util.*;
 
 class Agent implements Comparable<Agent> {
 
+    private static final int STRATEGY_NONE = 0;
+    private static final int STRATEGY_TIT_FOR_TAT = 1;
+    private static final int STRATEGY_ALL_D = 2;
+    private static final int STRATEGY_ALL_C = 3;
+    private static final int STRATEGY_SELF = 4;
+
     private Random gen = new Random();
     public Simulation scape;
 
@@ -14,6 +20,7 @@ class Agent implements Comparable<Agent> {
     private String strategy;
     private int[][] memory;
     private int[] memoryEncounters;
+    private int[] memoryStrategy;
     private int[][] memoryOwnActions;
     boolean hasMoved;
     private Random r = new Random();
@@ -52,6 +59,12 @@ class Agent implements Comparable<Agent> {
         memoryEncounters = new int[scape.numAgents];
         for (int n = 0; n < memoryEncounters.length; n++) {
             memoryEncounters[n] = 0;
+        }
+
+        //memoryStrategy[agentID] contains the deducted strategy, based on the other agents actions.
+        memoryStrategy = new int[scape.numAgents];
+        for (int n = 0; n < memoryStrategy.length; n++) {
+            memoryStrategy[n] = STRATEGY_NONE;
         }
     }
 
@@ -160,10 +173,14 @@ class Agent implements Comparable<Agent> {
             action = (r.nextBoolean() ? 1 : -1);
         } //SSTRAT 
         else if (strategy.equals("SSTRAT")) {
-            if (memoryEncounters[playerID] == 0 || memoryEncounters[playerID] == 3) {
+            if (memoryEncounters[playerID] == 1 || memoryEncounters[playerID] == 4) {
                 action = -1;
-            } else if (memoryEncounters[playerID] == 1 || memoryEncounters[playerID] == 2) {
+            } else if (memoryEncounters[playerID] == 2 || memoryEncounters[playerID] == 3) {
                 action = 1;
+            } else if (memoryStrategy[playerID] == STRATEGY_TIT_FOR_TAT || memoryStrategy[playerID] == STRATEGY_SELF) {
+                action = 1;
+            } else if (memoryStrategy[playerID] == STRATEGY_ALL_C || memoryStrategy[playerID] == STRATEGY_ALL_D) {
+                action = -1;
             } else {//ALL-D or ALL-C
                 boolean isAllD = true;
                 boolean isAllC = true;
@@ -175,20 +192,27 @@ class Agent implements Comparable<Agent> {
                     if (memory[playerID][i] == -1) {
                         isAllC = false;
                     }
-                }
-                if (isAllD || isAllC) {
+                }// against ALL-D
+                if (isAllD) {
                     action = -1;
+                    memoryStrategy[playerID] = STRATEGY_ALL_D;
+                } // against ALL-C
+                else if (isAllC) {
+                    action = -1;
+                    memoryStrategy[playerID] = STRATEGY_ALL_C;
                 } //against TIT-for-TAT
                 else if (memory[playerID][0] == memoryOwnActions[playerID][1]
                         && memory[playerID][1] == memoryOwnActions[playerID][2]
                         && memory[playerID][2] == memoryOwnActions[playerID][3]) {
                     action = 1;
+                    memoryStrategy[playerID] = STRATEGY_TIT_FOR_TAT;
                 } // against itself
                 else if (memory[playerID][0] == -1
                         && memory[playerID][1] == 1
                         && memory[playerID][2] == 1
                         && memory[playerID][3] == -1) {
                     action = 1;
+                    memoryStrategy[playerID] = STRATEGY_SELF;
                 } else {
                     action = -1;
                 }
@@ -196,9 +220,9 @@ class Agent implements Comparable<Agent> {
         }
         return action;
     }
-
     // Generate a vector with the objects you need. Currently there
     // are two options available: players and free sites.
+
     public Vector find(String objects) {
         Vector data = new Vector();
 
